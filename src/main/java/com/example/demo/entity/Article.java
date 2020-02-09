@@ -18,6 +18,9 @@ public class Article {
     @Column
     private double prix;
 
+    @Column
+    private String description;
+
     public Long getId() {
         return id;
     }
@@ -40,6 +43,14 @@ public class Article {
 
     public void setPrix(double prix) {
         this.prix = prix;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 }

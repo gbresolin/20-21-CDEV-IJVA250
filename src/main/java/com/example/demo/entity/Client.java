@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.Period;
 
 /**
  * Entity représentant un client.
@@ -52,6 +53,14 @@ public class Client {
 
     public void setDateNaissance(LocalDate dateNaissance) {
         this.dateNaissance = dateNaissance;
+    }
+
+    // Calcul de l'âge du client
+    public int getAge() {
+        LocalDate birthday = getDateNaissance();
+        LocalDate now = LocalDate.now();
+        Period period = Period.between(birthday, now);
+        return period.getYears();
     }
 
 }

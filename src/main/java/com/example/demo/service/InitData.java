@@ -60,16 +60,19 @@ public class InitData implements ApplicationListener<ApplicationReadyEvent> {
         Article a1 = new Article();
         a1.setLibelle("Chargeurs de téléphones Portables");
         a1.setPrix(22.98);
+        a1.setDescription("Samsung EP-P1100. Type de chargeur: Intérieur");
         em.persist(a1);
 
         Article a2 = new Article();
         a2.setLibelle("Playmobil Hydravion de Police");
         a2.setPrix(14.39);
+        a2.setDescription("L'intérieur de l'avion peut contenir deux personnages et une valise.");
         em.persist(a2);
 
         Article a3 = new Article();
         a3.setLibelle("Distributeur de croquettes pour chien");
         a3.setPrix(12.99);
+        a3.setDescription("Distributeur de nourriture croquettes, biscuits ou snacks pour chats et chiens Plastique robuste avec couvercle amovible");
         em.persist(a3);
 
         Facture f1 = new Facture();
