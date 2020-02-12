@@ -3,8 +3,10 @@ package com.example.demo.controller;
 import com.example.demo.entity.Article;
 import com.example.demo.entity.Client;
 import com.example.demo.entity.Facture;
+import com.example.demo.entity.LigneFacture;
 import com.example.demo.repository.ClientRepository;
 import com.example.demo.repository.FactureRepository;
+import com.example.demo.repository.LigneFactureRepository;
 import com.example.demo.service.impl.ClientServiceImpl;
 import com.example.demo.service.ArticleService;
 import com.example.demo.service.FactureService;
@@ -28,12 +30,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Controller principale pour affichage des clients / factures sur la page d'acceuil.
@@ -46,6 +46,9 @@ public class HomeController {
 
     @Autowired
     private FactureRepository factureRepository;
+
+    @Autowired
+    private LigneFactureRepository ligneFactureRepository;
 
     private ArticleService articleService;
     private ClientServiceImpl clientServiceImpl;
@@ -246,11 +249,6 @@ public class HomeController {
 
         writer.println("Nom;Prénom;Age");
         for (Client client : clients) {
-            // Calcul de l'âge du client
-            LocalDate birthday = client.getDateNaissance();
-            LocalDate now = LocalDate.now();
-            Period period = Period.between(birthday, now);
-
             writer.write(client.getNom() + ";" + client.getPrenom() + ";" + client.getAge() + " ans" + "\n");
         }
     }
@@ -321,13 +319,6 @@ public class HomeController {
             CellStyleData.setTopBorderColor(IndexedColors.BLUE.getIndex());
             CellStyleData.setFont(FontData);
 
-            /*
-            for (int i = 0; i < 3; i++) {
-                Cell cell = row.createCell(i);
-                cell.setCellStyle(headerCellStyle);
-            }
-            */
-
             Cell cell_0 = row.createCell(0);
             Cell cell_1 = row.createCell(1);
             Cell cell_2 = row.createCell(2);
@@ -347,11 +338,8 @@ public class HomeController {
         ServletOutputStream out = response.getOutputStream();
         workbook.write(out);
 
-        //FileOutputStream outputStream = new FileOutputStream("clients-excel.xlsx");
-        //workbook.write(outputStream);
         workbook.close();
         System.out.println("Le fichier clients-excel.xlsx a été correctement enregistré sur le disque !");
-
     }
 
 
@@ -535,7 +523,10 @@ public class HomeController {
 
         //List<Facture> factures = factureService.findFacturesNom();
         List<Article> articles = articleService.findAll();
-        Optional<Facture> factures = factureRepository.findById(id);
+        Facture factures = factureRepository.findById(id).get();
+        //Client clients = clientRepository.findById(id).get();
+        //List<LigneFacture> ligneFacture = factures.getLigneFactures();
+
 
         // 1. Create document
         Document document = new Document(PageSize.A4, 50, 50, 50, 50);
@@ -556,7 +547,7 @@ public class HomeController {
         table.setWidths(columnWidths);
 
         // 4. Add content
-        document.add(new Paragraph("Facture " + id));
+        document.add(new Paragraph("Facture numéro " + id + " de " + factures.getClient().getNom() + " " + factures.getClient().getPrenom()));
 
         PdfPCell cell1 = new PdfPCell(new Paragraph("Désignation"));
         cell1.setBorderColor(BaseColor.BLUE);
@@ -580,11 +571,14 @@ public class HomeController {
         table.addCell(cell2);
         table.addCell(cell3);
 
-        for (Article article : articles) {
-            table.addCell("");
+        /*
+        for (Facture facture : factures) {
+            table.addCell(factures.getClient().getClass().);
             table.addCell("");
             table.addCell("zz");
         }
+
+         */
 
         document.add(table);
 
@@ -652,11 +646,11 @@ public class HomeController {
         Row row3 = sheet.createRow(3);
         for (Facture facture : factures) {
             Cell cell7 = row3.createCell(0);
-            cell7.setCellValue(facture.getId() + "2 facture(s) : ");
+            cell7.setCellValue("2 facture(s) : ");
             cell7.setCellStyle(factureCellStyle);
         }
         Cell cell8 = row3.createCell(1);
-        cell8.setCellValue(date);
+        cell8.setCellValue("");
         cell8.setCellStyle(CellStyleDate);
 
         // Resize all columns to fit the content size
