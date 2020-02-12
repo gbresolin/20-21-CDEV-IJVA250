@@ -149,13 +149,6 @@ public class HomeController {
             CellStyleData.setTopBorderColor(IndexedColors.BLUE.getIndex());
             CellStyleData.setFont(FontData);
 
-            /*
-            for (int i = 0; i < 3; i++) {
-                Cell cell = row.createCell(i);
-                cell.setCellStyle(headerCellStyle);
-            }
-            */
-
             Cell cell_0 = row.createCell(0);
             Cell cell_1 = row.createCell(1);
             Cell cell_2 = row.createCell(2);
@@ -202,7 +195,7 @@ public class HomeController {
         table.setSpacingAfter(10f); //Space after table
 
         //Set Column widths
-        float[] columnWidths = {1f, 1f, 1f};
+        float[] columnWidths = {2f, 1f, 2f};
         table.setWidths(columnWidths);
 
         // 4. Add content
@@ -606,7 +599,7 @@ public class HomeController {
         response.setHeader("Content-Disposition", "attachement; filename=\"factures-client-"+id+"-excel.xlsx\"");
         //PrintWriter writer = response.getWriter();
 
-        //Long factures = factureRepository.countFactureByClient(id);
+        List<Facture> factures = factureService.findFacturesNom();
         Client clients = clientRepository.findById(id).get();
 
         Workbook workbook = new XSSFWorkbook();
@@ -657,9 +650,11 @@ public class HomeController {
 
         // ROW Facturation
         Row row3 = sheet.createRow(3);
-        Cell cell7 = row3.createCell(0);
-        cell7.setCellValue("2 facture(s)");
-        cell7.setCellStyle(factureCellStyle);
+        for (Facture facture : factures) {
+            Cell cell7 = row3.createCell(0);
+            cell7.setCellValue(facture.getId() + "2 facture(s) : ");
+            cell7.setCellStyle(factureCellStyle);
+        }
         Cell cell8 = row3.createCell(1);
         cell8.setCellValue(date);
         cell8.setCellStyle(CellStyleDate);
